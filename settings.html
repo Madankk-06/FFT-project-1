@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartHome UI - Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0066ff 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 100vh;
+            background: rgba(15, 20, 50, 0.9);
+            border-right: 1px solid rgba(0, 102, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0066ff, #00d4ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .nav-icon:hover,
+        .nav-icon.active {
+            color: #00d4ff;
+            background: rgba(0, 102, 255, 0.1);
+        }
+
+        .nav-icon.active::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            width: 4px;
+            height: 30px;
+            background: #00d4ff;
+            border-radius: 2px;
+        }
+
+        .nav-spacer {
+            flex: 1;
+        }
+
+        .nav-bottom {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-top: 1px solid rgba(0, 102, 255, 0.2);
+            padding-top: 20px;
+        }
+
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 80px;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 102, 255, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 102, 255, 0.2);
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 102, 255, 0.2);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #00d4ff;
+            font-size: 18px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 102, 255, 0.3);
+            transform: translateX(-2px);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-bell,
+        .user-profile {
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .notification-bell:hover,
+        .user-profile:hover {
+            color: #00d4ff;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 10px;
+            height: 10px;
+            background: #ff4444;
+            border-radius: 50%;
+        }
+
+        
+        .main-content {
+            margin-left: 80px;
+            margin-top: 100px;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .settings-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            max-width: 1400px;
+        }
+
+        
+        .settings-sidebar {
+            background: rgba(15, 20, 50, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .settings-menu-item {
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            color: #b0b8c8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .settings-menu-item:hover {
+            background: rgba(0, 102, 255, 0.1);
+            border-color: rgba(0, 102, 255, 0.3);
+            color: #00d4ff;
+        }
+
+        .settings-menu-item.active {
+            background: rgba(0, 102, 255, 0.2);
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+       
+        .settings-content {
+            background: rgba(15, 20, 50, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(0, 102, 255, 0.2);
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #00d4ff;
+            font-size: 24px;
+        }
+
+        .settings-group {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .settings-group:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .setting-title {
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .setting-description {
+            color: #b0b8c8;
+            font-size: 12px;
+        }
+
+        .setting-value {
+            color: #00d4ff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: rgba(0, 102, 255, 0.2);
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 102, 255, 0.3);
+        }
+
+        .toggle-switch.on {
+            background: #00d4ff;
+            border-color: #00d4ff;
+        }
+
+        .toggle-circle {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.on .toggle-circle {
+            left: 24px;
+        }
+
+        
+        .progress-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff9500);
+            border-radius: 4px;
+            width: 57%;
+        }
+
+        .progress-text {
+            color: #b0b8c8;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Button */
+        .btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #0066ff, #00d4ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 102, 255, 0.2);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            color: #00d4ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: #ff4444;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 25px rgba(255, 68, 68, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 102, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 102, 255, 0.5);
+        }
+
+        @media (max-width: 1024px) {
+            .settings-container {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-sidebar {
+                position: relative;
+                top: auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="sidebar">
+        <div class="logo-icon">
+            <i class="fas fa-home"></i>
+        </div>
+
+        <div class="nav-icon">
+            <a href="F:\MCA\FFT\React\mk-homes\src\Home.html"><i class="fas fa-border-all"></i></a>
+        </div>
+
+        <div class="nav-icon">
+            <a href="F:\MCA\FFT\React\mk-homes\src\rooms.html"><i class="fas fa-chart-bar"></i></a>
+        </div>
+
+        <div class="nav-icon">
+            <a href="F:\MCA\FFT\React\mk-homes\src\chatBot.html"><i class="fas fa-lightbulb"></i></a>
+        </div>
+
+        <div class="nav-icon">
+            <a href="F:\MCA\FFT\React\mk-homes\src\electricity.html"><i class="fas fa-calendar"></i></a>
+        </div>
+
+        <div class="nav-icon">
+            <a href="F:\MCA\FFT\React\mk-homes\src\devices.html"><i class="fas fa-file-alt"></i></a>
+        </div>
+
+        <div class="nav-spacer"></div>
+
+        <div class="nav-bottom">
+            <div class="nav-icon active">
+                <i class="fas fa-cog"></i>
+            </div>
+
+            <div class="nav-icon">
+                <a href="F:\MCA\FFT\React\mk-homes\src\index.html"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="page-title">Settings</div>
+        </div>
+
+        <div class="header-right">
+            <div class="notification-bell">
+                <i class="fas fa-bell"></i>
+            </div>
+
+            <div class="user-profile">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="settings-container">
+            <div class="settings-sidebar">
+                <div class="settings-menu-item active" onclick="showSection('storage')">
+                    <i class="fas fa-database"></i>
+                    Storage
+                </div>
+                <div class="settings-menu-item" onclick="showSection('notifications')">
+                    <i class="fas fa-bell"></i>
+                    Notifications
+                </div>
+                <div class="settings-menu-item" onclick="showSection('security')">
+                    <i class="fas fa-lock"></i>
+                    Security
+                </div>
+                <div class="settings-menu-item" onclick="showSection('devices')">
+                    <i class="fas fa-router"></i>
+                    Devices
+                </div>
+                <div class="settings-menu-item" onclick="showSection('general')">
+                    <i class="fas fa-sliders-h"></i>
+                    General
+                </div>
+                <div class="settings-menu-item" onclick="showSection('about')">
+                    <i class="fas fa-info-circle"></i>
+                    About
+                </div>
+            </div>
+
+           
+            <div class="settings-content">
+               
+                <div class="settings-section active" id="storage">
+                    <div class="section-title">
+                        <i class="fas fa-database"></i>
+                        Storage
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Storage space</span>
+                                <span class="setting-description">1.37 GB used • 10 GB free</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Used</span>
+                                <span>10 GB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Auto-delete old backups</span>
+                                <span class="setting-description">Automatically remove backups older than 30 days</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Cloud sync</span>
+                                <span class="setting-description">Enable cloud storage synchronization</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Clear cache</span>
+                                <span class="setting-description">Free up 245 MB of storage</span>
+                            </div>
+                            <button class="btn btn-secondary">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="settings-section" id="notifications">
+                    <div class="section-title">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Device alerts</span>
+                                <span class="setting-description">Get notified when devices go offline</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Energy usage alerts</span>
+                                <span class="setting-description">Alert when energy usage exceeds limit</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Security notifications</span>
+                                <span class="setting-description">Alerts for suspicious activities</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Scheduling reminders</span>
+                                <span class="setting-description">Reminders for scheduled automations</span>
+                            </div>
+                            <div class="toggle-switch">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            
+                <div class="settings-section" id="security">
+                    <div class="section-title">
+                        <i class="fas fa-lock"></i>
+                        Security
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Two-factor authentication</span>
+                                <span class="setting-description">Add extra layer of security</span>
+                            </div>
+                            <div class="toggle-switch">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Password protection</span>
+                                <span class="setting-description">Last changed 45 days ago</span>
+                            </div>
+                            <button class="btn btn-secondary">Change</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Active sessions</span>
+                                <span class="setting-description">3 devices currently logged in</span>
+                            </div>
+                            <span class="setting-value">Manage</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Login alerts</span>
+                                <span class="setting-description">Get alerts for new login attempts</span>
+                            </div>
+                            <div class="toggle-switch on">
+                                <div class="toggle-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="settings-section" id="devices">
+                    <div class="section-title">
+                        <i class="fas fa-router"></i>
+                        Connected Devices
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Default device hub</span>
+                                <span class="setting-description">Primary control center for automations</span>
+                            </div>
+                            <span class="setting-value">Hub 1</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">WiFi network</span>
+                                <span class="setting-description">Currently connected to SmartHome-5G</span>
+                            </div>
+                            <span class="setting-value">Configure</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Bluetooth devices</span>
+                                <span class="setting-description">8 devices paired</span>
+                            </div>
+                            <button class="btn btn-secondary">View All</button>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Backup hub setup</span>
+                                <span class="setting-description">Configure redundancy</span>
+                            </div>
+                            <button class="btn btn-secondary">Setup</button>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="settings-section" id="general">
+                    <div class="section-title">
+                        <i class="fas fa-sliders-h"></i>
+                        General
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Theme</span>
+                                <span class="setting-description">Choose your preferred theme</span>
+                            </div>
+                            <span class="setting-value">Dark</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Language</span>
+                                <span class="setting-description">System language preference</span>
+                            </div>
+                            <span class="setting-value">English</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Time format</span>
+                                <span class="setting-description">24-hour or 12-hour display</span>
+                            </div>
+                            <span class="setting-value">24-hour</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Auto-lock timeout</span>
+                                <span class="setting-description">Lock after 5 minutes of inactivity</span>
+                            </div>
+                            <span class="setting-value">5 min</span>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="settings-section" id="about">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        About
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Application name</span>
+                                <span class="setting-description">SmartHome UI Control Panel</span>
+                            </div>
+                            <span class="setting-value">v2.1.0</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Build number</span>
+                                <span class="setting-description">Latest version</span>
+                            </div>
+                            <span class="setting-value">2024.10.001</span>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span class="setting-title">Check for updates</span>
+                                <span class="setting-description">You are on the latest version</span>
+                            </div>
+                            <button class="btn btn-secondary">Check</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="button-group">
+                            <button class="btn">Privacy Policy</button>
+                            <button class="btn">Terms of Service</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <div class="button-group">
+                            <button class="btn btn-secondary">Contact Support</button>
+                            <button class="btn btn-danger">Reset to Default</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.querySelectorAll('.settings-menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.settings-menu-item').classList.add('active');
+        }
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('on');
+            });
+        });
+        document.querySelector('.back-btn').addEventListener('click', function() {
+            window.history.back();
+        });
+    </script>
+</body>
+</html>

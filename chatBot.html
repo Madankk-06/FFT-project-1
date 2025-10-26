@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - MK-Homes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1e3a8a 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .back-button {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-right: 15px;
+        }
+
+        .back-button:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateX(-3px);
+        }
+
+        .header-text h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+        }
+
+        .chat-header {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bot-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .bot-info h2 {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .bot-status {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .quick-actions {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 10px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 18px 18px 18px 4px;
+        }
+
+        .message.user .message-content {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 18px 18px 4px 18px;
+            text-align: right;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 18px 18px 18px 4px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input-container {
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #3b82f6;
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .welcome-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtext {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="back-button" onclick="window.history.back()">←</div>
+            <div class="header-text">
+                <h1>AI Assistant</h1>
+                <p>Get help with MK-Homes</p>
+            </div>
+        </div>
+        <div class="user-avatar">M</div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bot-avatar">🤖</div>
+            <div class="bot-info">
+                <h2>MK-Homes Assistant</h2>
+                <div class="bot-status">
+                    <div class="online-dot"></div>
+                    Online • Ready to help
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="quick-title">Quick Questions:</div>
+            <div class="quick-buttons">
+                <button class="quick-btn" onclick="askQuestion('How do I control my devices?')">📱 Control Devices</button>
+                <button class="quick-btn" onclick="askQuestion('How can I monitor energy usage?')">⚡ Energy Monitor</button>
+                <button class="quick-btn" onclick="askQuestion('How do I add a new room?')">🏠 Add Rooms</button>
+                <button class="quick-btn" onclick="askQuestion('How to view my profile?')">👤 Profile Settings</button>
+                <button class="quick-btn" onclick="askQuestion('What devices are supported?')">🔌 Supported Devices</button>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-avatar">🤖</div>
+                <div>
+                    <div class="message-content">
+                        Hello! I'm your MK-Homes AI Assistant. I'm here to help you navigate and use the MK-Homes smart home application. Ask me anything about controlling devices, monitoring energy, managing rooms, or any other features!
+                    </div>
+                    <div class="message-time" id="botTime"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Type your question here..."
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-button" onclick="sendMessage()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const knowledgeBase = {
+            'control devices': {
+                keywords: ['control', 'device', 'turn on', 'turn off', 'switch', 'operate'],
+                response: "To control your devices:\n\n1. Navigate to the 'Room Control' page from the main menu\n2. Select the room you want to control (Living Room, Dining Room, etc.)\n3. Click on any device card to toggle it ON/OFF\n4. The device status will update in real-time\n5. You can also view all active devices and their power consumption\n\nEach device card shows its current status, power usage, and has easy toggle controls!"
+            },
+            'energy monitor': {
+                keywords: ['energy', 'power', 'consumption', 'electricity', 'usage', 'bill', 'cost'],
+                response: "The Energy Monitor feature helps you track electricity consumption:\n\n📊 Real-time monitoring of each room's power usage\n⚡ Live updates showing current consumption in kW\n💰 Automatic cost calculation based on electricity rates\n📈 Hourly consumption charts for the last 12 hours\n🌱 CO₂ savings and efficiency tracking\n\nYou can access the Energy Monitor from the main dashboard. It shows consumption for all 6 rooms: Living Room, Dining Room, Bed Room, Bath Room, Backyard, and Garage."
+            },
+            'add room': {
+                keywords: ['add', 'room', 'new room', 'create', 'setup'],
+                response: "Currently, MK-Homes comes with 6 pre-configured rooms:\n\n🏠 Living Room\n🍽️ Dining Room\n🛏️ Bed Room\n🚿 Bath Room\n🌳 Backyard\n🚗 Garage\n\nEach room can have multiple devices added to it. To manage rooms, go to the Room Control page and click the 'Edit' button. You can customize device assignments and room settings there."
+            },
+            'profile': {
+                keywords: ['profile', 'account', 'settings', 'personal', 'information', 'edit profile'],
+                response: "To access your profile:\n\n1. Click on your avatar (M) in the top-right corner, or\n2. Navigate to the Profile page from the main menu\n\nFrom your profile you can:\n✏️ Edit personal information (email, phone, location)\n🏠 Update home details and setup\n⚙️ Manage account settings and preferences\n🔒 Change password and security settings\n🔔 Configure notifications and alerts\n\nAll your profile changes are saved automatically!"
+            },
+            'supported devices': {
+                keywords: ['devices', 'supported', 'compatible', 'what devices', 'add device'],
+                response: "MK-Homes supports a wide range of smart devices:\n\n💡 Smart Lights (Philips Hue, LIFX, etc.)\n❄️ Smart ACs (Daikin, Samsung, LG)\n📺 Smart TVs (OnePlus, LG, Sony)\n🌀 Smart Fans\n🧊 Smart Refrigerators\n🔥 Smart Ovens and Heaters\n🚨 Security devices (indicators, sensors)\n\nAll devices connect via WiFi. To add a new device, go to the 'Device Management' page and click 'Add Device'. The system will scan for nearby compatible devices."
+            },
+            'device management': {
+                keywords: ['manage device', 'device list', 'connected', 'available', 'disconnect'],
+                response: "Device Management lets you control all your connected devices:\n\n📱 View all connected devices with real-time status\n🔍 Discover new available devices nearby\n⚙️ Access individual device settings\n📊 Monitor signal strength and power usage\n🔌 Connect or disconnect devices easily\n\nEach device shows:\n• IP address and connection status\n• Signal strength indicator\n• Current power consumption\n• Room assignment\n\nYou can filter devices by room and search for specific devices using the search bar."
+            },
+            'rooms': {
+                keywords: ['rooms', 'room list', 'how many rooms', 'which rooms'],
+                response: "MK-Homes has 6 rooms configured:\n\n1. 🏠 Living Room - 10 devices (Lights, AC, Fans, TV)\n2. 🍽️ Dining Room - 6 devices (Lights, Exhaust Fan, Oven, Fridge)\n3. 🛏️ Bed Room - 5 devices (Night Light, AC, TV, Bed Extender)\n4. 🚿 Bath Room - 3 devices (Light, AC, Heater)\n5. 🌳 Backyard - 6 devices (4 Lights, 2 Tower Lights)\n6. 🚗 Garage - 3 devices (Light, Vehicle Indicator, Emergency Power Off)\n\nYou can control all devices from the Room Control page!"
+            },
+            'help': {
+                keywords: ['help', 'guide', 'tutorial', 'how to use', 'getting started'],
+                response: "Here's a quick guide to using MK-Homes:\n\n🏠 Dashboard: Overview of your smart home\n📱 Room Control: Turn devices ON/OFF by room\n⚡ Energy Monitor: Track power consumption\n🔌 Device Management: Add/remove devices\n👤 Profile: Manage your account\n\nNavigation:\n• Use the back button (←) to return to previous pages\n• Click on room tabs to switch between rooms\n• Tap device cards to control them\n\nNeed specific help? Just ask me about any feature!"
+            }
+        };
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function addMessage(text, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = isUser ? 'M' : '🤖';
+            const time = getCurrentTime();
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div>
+                    <div class="message-content">${text.replace(/\n/g, '<br>')}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="typing-indicator active">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function getBotResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            for (const [key, data] of Object.entries(knowledgeBase)) {
+                for (const keyword of data.keywords) {
+                    if (lowerMessage.includes(keyword)) {
+                        return data.response;
+                    }
+                }
+            }
+            
+            // Default response
+            return "I'm here to help you with MK-Homes! I can assist you with:\n\n📱 Controlling devices\n⚡ Monitoring energy usage\n🏠 Managing rooms\n🔌 Device management\n👤 Profile settings\n\nPlease ask me about any of these features, or try one of the quick questions above!";
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate bot thinking time and respond
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getBotResponse(message);
+                addMessage(response, false);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function askQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Set initial bot time
+        document.getElementById('botTime').textContent = getCurrentTime();
+    </script>
+</body>
+</html>
