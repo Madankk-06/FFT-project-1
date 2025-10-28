@@ -26,20 +26,26 @@
             top: 0;
             width: 80px;
             height: 100vh;
-            background: white;
+            background: #a7e3ee;
             border-right: 1px solid #e0e0e0;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px 0;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            z-index: 1000;
+            z-index: 1001;
+            transform: translateX(-80px);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.visible {
+            transform: translateX(0);
         }
 
         .logo-icon {
             width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #0066ff, #00d4ff);
+            height: 10px;
+            /* background: linear-gradient(135deg, #0066ff, #00d4ff); */
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -49,6 +55,8 @@
             margin-bottom: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 10px;
+            margin-left:7px;
         }
 
         .logo-icon:hover {
@@ -61,7 +69,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #999;
+            color: black;
             font-size: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -86,6 +94,14 @@
             border-radius: 2px;
         }
 
+        .nav-icon a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .nav-spacer {
             flex: 1;
         }
@@ -101,11 +117,48 @@
             padding-top: 20px;
         }
 
+        /* Hamburger Menu Button */
+        .hamburger-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1002;
+            transition: all 0.3s ease;
+            gap: 5px;
+        }
+
+        .hamburger-btn.shifted {
+            left: 100px;
+        }
+
+        .hamburger-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .hamburger-btn span {
+            width: 20px;
+            height: 2px;
+            background: #0066ff;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
         /* Main Content */
         .main-content {
-            margin-left: 80px;
+            margin-left: 0;
             flex: 1;
             padding: 30px 40px;
+            padding-left: 60px;
             overflow-y: auto;
             margin-top: 100px;
         }
@@ -114,7 +167,7 @@
         .header {
             position: fixed;
             top: 0;
-            left: 80px;
+            left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
@@ -131,17 +184,19 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex: 1;
+            justify-content: center;
+            margin-left: 400px;
         }
 
         .greeting {
-            font-family:serif;
+            font-family: serif;
             font-size: 30px;
             font-weight: 700;
             color: white;
         }
 
         .greeting-sub {
-            
             font-size: 13px;
             color: #b0d4ff;
         }
@@ -150,6 +205,7 @@
             display: flex;
             align-items: center;
             gap: 25px;
+            margin-left: auto;
         }
 
         .search-bar {
@@ -222,6 +278,14 @@
             font-size: 18px;
         }
 
+        .user-avatar a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .user-name {
             font-size: 14px;
             color: white;
@@ -237,7 +301,7 @@
         }
 
         .camera-card {
-            background: white;
+            background: #a7e3ee;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -254,7 +318,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            background: #f9f9f9;
+            background: #a7e3ee;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -290,21 +354,11 @@
             position: relative;
             overflow: hidden;
         }
-        /* .camera-image:hover{
-            border: whitesmoke solid 2px;
-        } */
-        /* .imgb{
-            height: 250px;
-            width: 670px;
-            text-align: center;
-            
-        } */
 
         .camera-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            
         }
 
         .camera-toggle {
@@ -317,18 +371,10 @@
             border-radius: 12px;
             display: flex;
             align-items: center;
-            /* padding: 0 2px; */
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        /* .imga{
-            
-            padding: 20px;
-            width: 100px;
-            height: 200px;
-            margin: 20px;
-        } */
-        
+
         .toggle-circle {
             width: 20px;
             height: 20px;
@@ -375,9 +421,17 @@
             transition: all 0.3s ease;
         }
 
+        .edit-btn a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .edit-btn:hover {
             transform: translateX(-2px);
-            box-shadow: 2px 3px 2px  #2dd4bf;
+            box-shadow: 2px 3px 2px #2dd4bf;
         }
 
         .add-device-btn {
@@ -394,10 +448,22 @@
             align-items: center;
             gap: 6px;
         }
+        .mk-img{
+            height: 15%;
+            width: 15%;
+        }
+
+        .add-device-btn a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         .add-device-btn:hover {
             transform: translateX(-2px);
-            box-shadow: 2px 3px 2px  #2dd4bf ;
+            box-shadow: 2px 3px 2px #2dd4bf;
         }
 
         .rooms-tab {
@@ -436,7 +502,7 @@
         }
 
         .device-card {
-            background: white;
+            background: #a7e3ee;
             border-radius: 14px;
             padding: 20px;
             text-align: center;
@@ -508,6 +574,25 @@
             color: #0066ff;
         }
 
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.visible {
+            display: block;
+            opacity: 1;
+        }
+
         @media (max-width: 1400px) {
             .devices-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -544,10 +629,20 @@
     </style>
 </head>
 <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Hamburger Menu Button -->
+    <div class="hamburger-btn" id="hamburgerBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
     <!-- Sidebar Navigation -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="logo-icon">
-            <i class="fas fa-home"></i>
+            <i ><img src="E:\Black logo.png"height="80%" width="80%"></i>
         </div>
 
         <div class="nav-icon active">
@@ -588,6 +683,7 @@
         <!-- Header -->
         <div class="header">
             <div class="header-left">
+                <img class="mk-img" src="C:\Users\admin\Downloads\image-removebg-preview.png">
                 <div>
                     <div class="greeting">MK - HOMES</div>
                     <div class="greeting-sub">Welcome back to your smart home</div>
@@ -607,7 +703,7 @@
 
                 <div class="user-info">
                     <div class="user-avatar">
-                        <a href="profile.html"><i class="fas fa-user"></a></i>
+                        <a href="profile.html"><i class="fas fa-user"></i></a>
                     </div>
                     <div>
                         <div class="user-name">Master</div>
@@ -632,11 +728,7 @@
                     </div>
                 </div>
                 <div class="camera-image">
-                    <!-- <div class="camera-toggle" style="background: linear-gradient(135deg, rgba(0,102,255,0.9), rgba(0,212,255,0.9));"> 
-                    
-                        <div class="toggle-circle" style="background: white; margin-left: 18px;"></div>
-                    </div> -->
-                    <div class="imga"><img src="https://tkhsecurity.com/wp-content/uploads/2025/04/box-5-1920x1080.png"></div>
+                    <img src="https://tkhsecurity.com/wp-content/uploads/2025/04/box-5-1920x1080.png"> >
                 </div>
             </div>
 
@@ -654,9 +746,8 @@
                     </div>
                 </div>
                 <div class="camera-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <div class="imgb"><img src="https://preview.redd.it/cam-pan-v4-vs-cam-v4-v0-ecpeo8hnvulf1.jpg?width=640&crop=smart&auto=webp&s=55909f449d55ce0be24b248f1aded0105a5064bd"></div>
+                    <img src="https://preview.redd.it/cam-pan-v4-vs-cam-v4-v0-ecpeo8hnvulf1.jpg?width=640&crop=smart&auto=webp&s=55909f449d55ce0be24b248f1aded0105a5064bd">
                 </div>
-                
             </div>
         </div>
 
@@ -665,23 +756,13 @@
                 <div class="section-title">Main Switch</div>
                 <div style="display: flex; gap: 10px;">
                     <div class="edit-btn">
-                        <i class="fas fa-edit"></i> Edit
+                        <a href="edit.html"><i class="fas fa-edit"></i> Edit</a>
                     </div>
                     <div class="add-device-btn">
-                        <i class="fas fa-plus"></i> Add Device
+                        <a href="add-device.html"><i class="fas fa-plus"></i> Add Device</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Room Tabs -->
-            <!-- <div class="rooms-tab">
-                <div class="room-tab active">Living Room</div>
-                <div class="room-tab">Dining Room</div>
-                <div class="room-tab">Bed Room</div>
-                <div class="room-tab">Bath Room</div>
-                <div class="room-tab">Backyard</div>
-                <div class="room-tab">Garage</div>
-            </div> -->
 
             <!-- Devices Grid -->
             <div class="devices-grid">
@@ -793,7 +874,25 @@
     </div>
 
     <script>
-        // Toggle device cards
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        // Toggle sidebar with hamburger button
+        hamburgerBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('visible');
+            sidebarOverlay.classList.toggle('visible');
+            hamburgerBtn.classList.toggle('shifted');
+        });
+
+        // Close sidebar when overlay is clicked
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('visible');
+            sidebarOverlay.classList.remove('visible');
+            hamburgerBtn.classList.remove('shifted');
+        });
+
+        // Toggle device cards on/off
         document.querySelectorAll('.device-toggle').forEach(toggle => {
             toggle.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -815,15 +914,17 @@
             });
         });
 
-        // Sidebar navigation
+        // Sidebar navigation - set active state
         document.querySelectorAll('.nav-icon').forEach(icon => {
             icon.addEventListener('click', function() {
                 document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
+                // Close sidebar on mobile after clicking
+                sidebar.classList.remove('visible');
+                sidebarOverlay.classList.remove('visible');
+                hamburgerBtn.classList.remove('shifted');
             });
         });
     </script>
 </body>
 </html>
-
-
